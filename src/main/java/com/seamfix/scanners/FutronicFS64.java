@@ -122,9 +122,9 @@ public class FutronicFS64 implements ICallBack {
 
                 String[] split = deviceInfo.split(",");
                 String[] nameSplit = split[0].split(":");
-                this.name = nameSplit[1];
-                this.model = nameSplit[1];
-                if (model.equalsIgnoreCase("FS64")){
+                this.name = "Futronic";
+                this.model = "FS64";
+                if (model.contains("FS64")){
                     this.type = "4-4-2";
                 }
                 m_DevFP.SetAutoCapture(true);
