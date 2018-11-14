@@ -8,11 +8,9 @@ import com.futronictech.fs6xenrollmentkit.interfaces.ICallBack;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class FutronicFS64 implements ICallBack {
     public void setM_nScanType(byte m_nScanType) {
@@ -149,6 +147,8 @@ public class FutronicFS64 implements ICallBack {
 
     public void exit() {
         if (m_DevFP != null) {
+            //end every scan process
+            eventListener.onScanComplete(false,"exiting", (byte)-1);
             m_DevFP.Stop();
             m_DevFP.TurnOffLed();
             m_DevFP.Close();
@@ -243,13 +243,11 @@ public class FutronicFS64 implements ICallBack {
                     twoThumbsImages.clear();
                     twoThumbsImages.add(0, m_DevFP.getFingerPrintImage(ConstantDefs.FT_LEFT_THUMB));
                     twoThumbsImages.add(1, m_DevFP.getFingerPrintImage(ConstantDefs.FT_RIGHT_THUMB));
-                    //m_nSequence = ConstantDefs.NUMBER_FINGER_TYPES;
-                    //eventListener.onScanComplete(true, "Scan Completed", m_nSequence);
+
                     break;
                 case ConstantDefs.FT_PLAIN_LEFT_THUMB:
                     setFingerImage(m_DevFP.getFingerPrintImage(ConstantDefs.FT_PLAIN_LEFT_THUMB).getSubimage(70, 40, 380, 520));
-                    //m_nSequence = ConstantDefs.NUMBER_FINGER_TYPES;
-                    //eventListener.onScanComplete(true, "Scan Completed", m_nSequence);
+
                     break;
             }
 
@@ -349,27 +347,23 @@ public class FutronicFS64 implements ICallBack {
             m_nScanType = ConstantDefs.DEVICE_SCAN_TYPE_FLAT_FINGER;
         }
 
-        m_Timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                StartOperation();
-            }
-        };
-        m_Timer.schedule(timerTask, 20);
+        StartOperation();
+    }
+
+    public void runSingleCapture(byte finger){
+        m_nSequence = ConstantDefs.FT_PLAIN_LEFT_THUMB;
+        m_nScanType = ConstantDefs.DEVICE_SCAN_TYPE_FLAT_FINGER;
+        m_DevFP.setFingerToCapture(finger);
+
+        StartOperation();
     }
 
     public void runSingleCapture(){
         m_nSequence = ConstantDefs.FT_PLAIN_LEFT_THUMB;
         m_nScanType = ConstantDefs.DEVICE_SCAN_TYPE_FLAT_FINGER;
-        m_Timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                StartOperation();
-            }
-        };
-        m_Timer.schedule(timerTask, 20);
+        m_DevFP.setFingerToCapture(ConstantDefs.FT_PLAIN_FINGER);
+
+        StartOperation();
     }
 
     public void scanCompleteEventHandler(IScanCompleteEventListener eventListener) {
@@ -391,6 +385,14 @@ public class FutronicFS64 implements ICallBack {
     public void ShowAcceptedImage(byte finger, JLabel label){
         this.showLabel = label;
         m_DevFP.ShowAcceptedImage(finger, showLabel);
+    }
+
+    public void reset(){
+        setFingerImage(null);
+        leftHandImages = new ArrayList<BufferedImage>();
+        rightHandImages = new ArrayList<BufferedImage>();
+        twoThumbsImages = new ArrayList<BufferedImage>();
+        m_DevFP.setFingerToCapture((byte)-1);
     }
 
 

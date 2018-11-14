@@ -48,7 +48,7 @@ public class FingerPrintScan extends javax.swing.JFrame {
         futronicFS64.scanCompleteEventHandler(new IScanCompleteEventListener() {
             public void onScanComplete(boolean isValid, String message, final byte finger) {
                 lblStatus.setText(message);
-                if (isValid) {
+                if (isValid && finger != -1) {
                     if (!scanCompleted) {
                         switch (finger) {
                             case ConstantDefs.FT_LEFT_4_FINGERS:
@@ -565,7 +565,7 @@ public class FingerPrintScan extends javax.swing.JFrame {
             lblStatus.setText("Place Four Left Fingers");
             //futronicFS64.setM_nSequence(ConstantDefs.FT_PLAIN_LEFT_THUMB);
             isCaptureRunning = true;
-            futronicFS64.runCapture(ConstantDefs.FT_2_THUMBS);
+            futronicFS64.runSingleCapture(ConstantDefs.FT_RIGHT_THUMB);
             btnExitDevice.setEnabled(false);
         }
 

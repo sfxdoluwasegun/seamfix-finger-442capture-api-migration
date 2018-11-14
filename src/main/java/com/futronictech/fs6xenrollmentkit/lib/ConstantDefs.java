@@ -39,7 +39,7 @@ public class ConstantDefs {
     public static final byte FT_ROLLED_RIGHT_LITTLE = 22;
     public static final byte FT_PLAIN_LEFT_THUMB = 23;			// for Type4 record, 500*600 image
     public static final byte FT_PLAIN_RIGHT_THUMB = 24;
-    public static final byte FT_PLAIN_FINGER = 23;
+    public static final byte FT_PLAIN_FINGER = 25;
     
     public static final byte DEVICE_SCAN_TYPE_SLAPS = 0x01;
     public static final byte DEVICE_SCAN_TYPE_2THUMBS = 0x02;	//for FS50 
