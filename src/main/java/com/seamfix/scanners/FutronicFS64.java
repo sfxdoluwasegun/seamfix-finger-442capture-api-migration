@@ -123,11 +123,10 @@ public class FutronicFS64 implements ICallBack {
         try {
             if (m_DevFP.Open()) {
                 deviceInfo = m_DevFP.GetDeviceInfo();
-
-                String[] split = deviceInfo.split(",");
-                String[] nameSplit = split[0].split(":");
+                String[] split = deviceInfo.split("\n");
+                String[] nameSplit = split[0].split(": ");
                 this.name = "Futronic";
-                this.model = "FS64";
+                this.model = nameSplit[1];
                 if (model.contains("FS64")) {
                     this.type = "4-4-2";
                 }
@@ -155,6 +154,13 @@ public class FutronicFS64 implements ICallBack {
             m_DevFP.TurnOffLed();
             m_DevFP.Close();
         }
+    }
+
+    public void refresh(){
+        m_DevFP.Open();
+        m_DevFP.SetAutoCapture(true);
+        m_DevFP.SetSound(true);
+        m_DevFP.SetSegmentation(true);
     }
 
     public void OnAction(int nAction) {
@@ -246,15 +252,7 @@ public class FutronicFS64 implements ICallBack {
 
                     break;
                 case ConstantDefs.FT_PLAIN_LEFT_THUMB:
-                    try {
-//
-                        ImageIO.write(m_DevFP.getFingerPrintImage(ConstantDefs.FT_PLAIN_LEFT_THUMB), "bmp", new File("C:\\Users\\SEAMFIX\\Desktop\\fingerprints\\fingerCropped.bmp"));
-
-                    } catch (IOException e) {
-                        System.out.println("Exception occured :" + e.getMessage());
-                    }
                     setFingerImage(m_DevFP.getFingerPrintImage(ConstantDefs.FT_PLAIN_LEFT_THUMB).getSubimage(70, 40, 380, 520));
-
                     break;
             }
 
@@ -363,6 +361,7 @@ public class FutronicFS64 implements ICallBack {
     }
 
     public void runSingleCapture(byte finger) {
+        refresh();
         m_nSequence = ConstantDefs.FT_PLAIN_LEFT_THUMB;
         m_nScanType = ConstantDefs.DEVICE_SCAN_TYPE_FLAT_FINGER;
         m_DevFP.setFingerToCapture(finger);
@@ -371,6 +370,7 @@ public class FutronicFS64 implements ICallBack {
     }
 
     public void runSingleCapture() {
+        refresh();
         m_nSequence = ConstantDefs.FT_PLAIN_LEFT_THUMB;
         m_nScanType = ConstantDefs.DEVICE_SCAN_TYPE_FLAT_FINGER;
         m_DevFP.setFingerToCapture(ConstantDefs.FT_PLAIN_FINGER);
