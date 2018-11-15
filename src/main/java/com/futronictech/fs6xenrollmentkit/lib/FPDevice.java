@@ -1681,10 +1681,11 @@ public class FPDevice {
         public void run() {
             m_bRun = true;
             m_bIsScanning = true;
-            if (m_bIsRoll)
+            if (m_bIsRoll){
                 DoRoll();
-            else
+            } else {
                 DoScan();
+            }
             m_bIsScanning = false;
         }
 

@@ -5,9 +5,12 @@ import com.futronictech.fs6xenrollmentkit.lib.ConstantDefs;
 import com.futronictech.fs6xenrollmentkit.lib.FPDevice;
 import com.futronictech.fs6xenrollmentkit.interfaces.ICallBack;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
@@ -243,6 +246,13 @@ public class FutronicFS64 implements ICallBack {
 
                     break;
                 case ConstantDefs.FT_PLAIN_LEFT_THUMB:
+                    try {
+//
+                        ImageIO.write(m_DevFP.getFingerPrintImage(ConstantDefs.FT_PLAIN_LEFT_THUMB), "bmp", new File("C:\\Users\\SEAMFIX\\Desktop\\fingerprints\\fingerCropped.bmp"));
+
+                    } catch (IOException e) {
+                        System.out.println("Exception occured :" + e.getMessage());
+                    }
                     setFingerImage(m_DevFP.getFingerPrintImage(ConstantDefs.FT_PLAIN_LEFT_THUMB).getSubimage(70, 40, 380, 520));
 
                     break;
