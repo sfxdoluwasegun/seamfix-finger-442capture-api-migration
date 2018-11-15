@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
+import java.util.TimerTask;
 
 public class FutronicFS64 implements ICallBack {
     public void setM_nScanType(byte m_nScanType) {
@@ -21,7 +22,7 @@ public class FutronicFS64 implements ICallBack {
     private int m_nDiagnosticCode = 0;
     public byte m_nSequence = 0;
     private static FPDevice m_DevFP = null;
-    public static  FutronicFS64 futronicFS64;
+    public static FutronicFS64 futronicFS64;
     private String deviceInfo = "";
     private Timer m_Timer = null;
     private JLabel showLabel;
@@ -107,7 +108,7 @@ public class FutronicFS64 implements ICallBack {
         return futronicFS64;
     }
 
-    public void SetShowImageHandler(JLabel label){
+    public void SetShowImageHandler(JLabel label) {
         m_DevFP.SetShowImageHandler(label);
     }
 
@@ -124,7 +125,7 @@ public class FutronicFS64 implements ICallBack {
                 String[] nameSplit = split[0].split(":");
                 this.name = "Futronic";
                 this.model = "FS64";
-                if (model.contains("FS64")){
+                if (model.contains("FS64")) {
                     this.type = "4-4-2";
                 }
                 m_DevFP.SetAutoCapture(true);
@@ -135,11 +136,9 @@ public class FutronicFS64 implements ICallBack {
             } else {
                 return false;
             }
-        }
-        catch (IllegalStateException ex){
+        } catch (IllegalStateException ex) {
             ex.printStackTrace();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -148,7 +147,7 @@ public class FutronicFS64 implements ICallBack {
     public void exit() {
         if (m_DevFP != null) {
             //end every scan process
-            eventListener.onScanComplete(false,"exiting", (byte)-1);
+            eventListener.onScanComplete(false, "exiting", (byte) -1);
             m_DevFP.Stop();
             m_DevFP.TurnOffLed();
             m_DevFP.Close();
@@ -197,11 +196,9 @@ public class FutronicFS64 implements ICallBack {
         }
         try {
             m_DevFP.SaveAcceptedImage(m_nSequence);
-        }
-        catch (IllegalStateException ex){
+        } catch (IllegalStateException ex) {
             ex.printStackTrace();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Error while saving fingerprint image to memory");
             errorMessage = "Error while saving fingerprint image to memory";
             eventListener.onScanComplete(false, errorMessage, finger);
@@ -251,8 +248,7 @@ public class FutronicFS64 implements ICallBack {
                     break;
             }
 
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println("Error getting saved images from memory");
             errorMessage = "Error getting saved images from memory";
             eventListener.onScanComplete(false, errorMessage, finger);
@@ -261,7 +257,7 @@ public class FutronicFS64 implements ICallBack {
 
     }
 
-    public BufferedImage getFingerPrintImage(byte finger){
+    public BufferedImage getFingerPrintImage(byte finger) {
         return m_DevFP.getFingerPrintImage(finger);
     }
 
@@ -316,8 +312,7 @@ public class FutronicFS64 implements ICallBack {
             } else {
                 m_DevFP.TurnOffLed();
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println("Error occurred during scan");
             errorMessage = "Error occurred during scan";
             eventListener.onScanComplete(false, errorMessage, m_nSequence);
@@ -329,7 +324,14 @@ public class FutronicFS64 implements ICallBack {
 
     private void StartOperation() {
         m_DevFP.SetCallback(this);
-        StartScanning();
+        m_Timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                StartScanning();
+            }
+        };
+        m_Timer.schedule(timerTask, 100);
     }
 
     public void setM_nSequence(byte finger) {
@@ -350,7 +352,7 @@ public class FutronicFS64 implements ICallBack {
         StartOperation();
     }
 
-    public void runSingleCapture(byte finger){
+    public void runSingleCapture(byte finger) {
         m_nSequence = ConstantDefs.FT_PLAIN_LEFT_THUMB;
         m_nScanType = ConstantDefs.DEVICE_SCAN_TYPE_FLAT_FINGER;
         m_DevFP.setFingerToCapture(finger);
@@ -358,7 +360,7 @@ public class FutronicFS64 implements ICallBack {
         StartOperation();
     }
 
-    public void runSingleCapture(){
+    public void runSingleCapture() {
         m_nSequence = ConstantDefs.FT_PLAIN_LEFT_THUMB;
         m_nScanType = ConstantDefs.DEVICE_SCAN_TYPE_FLAT_FINGER;
         m_DevFP.setFingerToCapture(ConstantDefs.FT_PLAIN_FINGER);
@@ -370,29 +372,29 @@ public class FutronicFS64 implements ICallBack {
         this.eventListener = eventListener;
     }
 
-    public void TurnOffLed(){
+    public void TurnOffLed() {
         m_DevFP.TurnOffLed();
     }
 
-    public boolean CanSlaps(){
+    public boolean CanSlaps() {
         return m_DevFP.CanSlaps();
     }
 
-    public void Stop(){
+    public void Stop() {
         m_DevFP.Stop();
     }
 
-    public void ShowAcceptedImage(byte finger, JLabel label){
+    public void ShowAcceptedImage(byte finger, JLabel label) {
         this.showLabel = label;
         m_DevFP.ShowAcceptedImage(finger, showLabel);
     }
 
-    public void reset(){
+    public void reset() {
         setFingerImage(null);
         leftHandImages = new ArrayList<BufferedImage>();
         rightHandImages = new ArrayList<BufferedImage>();
         twoThumbsImages = new ArrayList<BufferedImage>();
-        m_DevFP.setFingerToCapture((byte)-1);
+        m_DevFP.setFingerToCapture((byte) -1);
     }
 
 
