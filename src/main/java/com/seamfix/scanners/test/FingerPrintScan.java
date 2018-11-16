@@ -39,7 +39,7 @@ public class FingerPrintScan extends javax.swing.JFrame {
         lblDeviceInfo.setEnabled(false);
         btnStartCapture.setEnabled(false);
         btnExitDevice.setEnabled(false);
-        futronicFS64 = FutronicFS64.getInstance();
+        futronicFS64 = new FutronicFS64();
         futronicFS64.SetShowImageHandler(lblPreview);
         isCaptureRunning = false;
         scanCompleted = false;

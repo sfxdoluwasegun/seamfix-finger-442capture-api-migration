@@ -25,24 +25,12 @@ public class FutronicFS64 implements ICallBack {
     private int m_nDiagnosticCode = 0;
     public byte m_nSequence = 0;
     private static FPDevice m_DevFP = null;
-    public static FutronicFS64 futronicFS64;
+    //public static FutronicFS64 futronicFS64;
     private String deviceInfo = "";
     private Timer m_Timer = null;
     private JLabel showLabel;
     public boolean m_bAskUnavailabilityReason;
     private IScanCompleteEventListener eventListener;
-
-    public String getName() {
-        return name;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public String getType() {
-        return type;
-    }
 
     private String name;
     private String model;
@@ -89,6 +77,10 @@ public class FutronicFS64 implements ICallBack {
 
     private String errorMessage;
 
+    public FutronicFS64(){
+        this(new FPDevice());
+    }
+
     public FutronicFS64(FPDevice device) {
         m_DevFP = device;
         leftHandImages = new ArrayList<BufferedImage>();
@@ -96,20 +88,20 @@ public class FutronicFS64 implements ICallBack {
         twoThumbsImages = new ArrayList<BufferedImage>();
     }
 
-    public static FutronicFS64 getInstance() {
-        FPDevice fpDevice;
-        synchronized (FutronicFS64.class) {
-            if (futronicFS64 == null) {
-                fpDevice = new FPDevice();
-                futronicFS64 = new FutronicFS64(fpDevice);
-            } else {
-                futronicFS64 = null;
-                fpDevice = new FPDevice();
-                futronicFS64 = new FutronicFS64(fpDevice);
-            }
-        }
-        return futronicFS64;
-    }
+//    public static FutronicFS64 getInstance() {
+//        FPDevice fpDevice;
+//        synchronized (FutronicFS64.class) {
+//            if (futronicFS64 == null) {
+//                fpDevice = new FPDevice();
+//                futronicFS64 = new FutronicFS64(fpDevice);
+//            } else {
+//                futronicFS64 = null;
+//                fpDevice = new FPDevice();
+//                futronicFS64 = new FutronicFS64(fpDevice);
+//            }
+//        }
+//        return futronicFS64;
+//    }
 
     public void SetShowImageHandler(JLabel label) {
         m_DevFP.SetShowImageHandler(label);
@@ -407,6 +399,17 @@ public class FutronicFS64 implements ICallBack {
         m_DevFP.setFingerToCapture((byte) -1);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public String getType() {
+        return type;
+    }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
