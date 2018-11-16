@@ -4,6 +4,7 @@ import com.futronictech.fs6xenrollmentkit.interfaces.IScanCompleteEventListener;
 import com.futronictech.fs6xenrollmentkit.lib.ConstantDefs;
 import com.futronictech.fs6xenrollmentkit.lib.FPDevice;
 import com.futronictech.fs6xenrollmentkit.interfaces.ICallBack;
+import lombok.extern.log4j.Log4j;
 
 import javax.swing.JLabel;
 import java.awt.Dimension;
@@ -13,10 +14,8 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+@Log4j
 public class FutronicFS64 implements ICallBack {
-    public void setM_nScanType(byte m_nScanType) {
-        this.m_nScanType = m_nScanType;
-    }
 
     public byte m_nScanType = ConstantDefs.DEVICE_SCAN_TYPE_SLAPS;    //bit0. Slaps 1.Single 2.Rolled
     private int diagnosticCode = 0;
@@ -179,7 +178,7 @@ public class FutronicFS64 implements ICallBack {
         } catch (IllegalStateException ex) {
             ex.printStackTrace();
         } catch (Exception e) {
-            System.out.println("Error while saving fingerprint image to memory");
+            log.error("Error while saving fingerprint image to memory", e);
             errorMessage = "Error while saving fingerprint image to memory";
             eventListener.onScanComplete(false, errorMessage, finger);
             e.printStackTrace();
@@ -228,7 +227,7 @@ public class FutronicFS64 implements ICallBack {
             }
 
         } catch (Exception ex) {
-            System.out.println("Error getting saved images from memory");
+            log.error("Error getting saved images from memory", ex);
             errorMessage = "Error getting saved images from memory";
             eventListener.onScanComplete(false, errorMessage, finger);
             ex.printStackTrace();
@@ -292,7 +291,7 @@ public class FutronicFS64 implements ICallBack {
                 fpDevice.TurnOffLed();
             }
         } catch (Exception ex) {
-            System.out.println("Error occurred during scan");
+            log.error("Error occurred during scan", ex);
             errorMessage = "Error occurred during scan";
             eventListener.onScanComplete(false, errorMessage, nSequence);
             ex.printStackTrace();
@@ -368,6 +367,10 @@ public class FutronicFS64 implements ICallBack {
     public void ShowAcceptedImage(byte finger, JLabel label) {
         this.showLabel = label;
         fpDevice.ShowAcceptedImage(finger, showLabel);
+    }
+
+    public void setM_nScanType(byte m_nScanType) {
+        this.m_nScanType = m_nScanType;
     }
 
     public void reset() {
