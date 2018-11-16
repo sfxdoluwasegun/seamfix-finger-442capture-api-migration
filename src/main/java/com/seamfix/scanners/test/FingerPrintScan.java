@@ -7,7 +7,6 @@ package com.seamfix.scanners.test;
 
 import com.futronictech.fs6xenrollmentkit.interfaces.IScanCompleteEventListener;
 import com.futronictech.fs6xenrollmentkit.lib.ConstantDefs;
-import com.futronictech.fs6xenrollmentkit.lib.FPDevice;
 import com.seamfix.scanners.FutronicFS64;
 
 import javax.imageio.ImageIO;
@@ -107,7 +106,7 @@ public class FingerPrintScan extends javax.swing.JFrame {
 
                     }
                 } else {
-                    futronicFS64.setM_nSequence(ConstantDefs.FT_LEFT_4_FINGERS);
+                    futronicFS64.setnSequence(ConstantDefs.FT_LEFT_4_FINGERS);
                     btnExitDevice.setEnabled(true);
                     btnStartCapture.setLabel("Start Capture");
                     isCaptureRunning = false;
@@ -135,7 +134,7 @@ public class FingerPrintScan extends javax.swing.JFrame {
                 nScanType |= ConstantDefs.DEVICE_SCAN_TYPE_2THUMBS;    //FS50
             }
             futronicFS64.setM_nScanType(nScanType);
-            futronicFS64.setM_nSequence(ConstantDefs.FT_LEFT_4_FINGERS);
+            futronicFS64.setnSequence(ConstantDefs.FT_LEFT_4_FINGERS);
         }
     }
 
@@ -563,7 +562,7 @@ public class FingerPrintScan extends javax.swing.JFrame {
             scanCompleted = false;
             btnStartCapture.setLabel("Stop Capture");
             lblStatus.setText("Place Four Left Fingers");
-            //futronicFS64.setM_nSequence(ConstantDefs.FT_PLAIN_LEFT_THUMB);
+            //futronicFS64.setnSequence(ConstantDefs.FT_PLAIN_LEFT_THUMB);
             isCaptureRunning = true;
             futronicFS64.runSingleCapture(ConstantDefs.FT_RIGHT_THUMB);
             btnExitDevice.setEnabled(false);
