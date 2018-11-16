@@ -70,7 +70,8 @@ public class ConstantDefs {
     public static final int FTR_DEVICE_USB_2_0_TYPE_80W = 11;
     public static final int FTR_DEVICE_USB_2_0_TYPE_80H = 13;
     public static final int FTR_DEVICE_USB_2_0_TYPE_88H = 14;
-    public static final int FTR_DEVICE_USB_2_0_TYPE_64 = 15;    
+    public static final int FTR_DEVICE_USB_2_0_TYPE_64 = 15;
+    public static final String SCANNER_TYPE = "4-4-2";
     
     public static String GetDeviceName(byte nDeviceCompatibility, short[] nDeviceID)
     {

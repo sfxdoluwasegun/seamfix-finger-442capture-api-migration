@@ -87,7 +87,7 @@ public class FutronicFS64 implements ICallBack {
                 this.name = "Futronic";
                 this.model = nameSplit[1];
                 if (model.contains("FS64")) {
-                    this.type = "4-4-2";
+                    this.type = ConstantDefs.SCANNER_TYPE;
                 }
                 fpDevice.SetAutoCapture(true);
                 fpDevice.SetSound(true);
