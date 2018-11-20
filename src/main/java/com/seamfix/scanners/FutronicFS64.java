@@ -180,7 +180,7 @@ public class FutronicFS64 implements ICallBack {
         } catch (Exception e) {
             log.error("Error while saving fingerprint image to memory", e);
             errorMessage = "Error while saving fingerprint image to memory";
-            eventListener.onScanComplete(false, errorMessage, finger);
+            eventListener.onScanComplete(false, errorMessage, ConstantDefs.UNKNOWN_FINGER);
             log.error(e.getMessage(), e);
         }
 
@@ -229,7 +229,7 @@ public class FutronicFS64 implements ICallBack {
         } catch (Exception ex) {
             log.error("Error getting saved images from memory", ex);
             errorMessage = "Error getting saved images from memory";
-            eventListener.onScanComplete(false, errorMessage, finger);
+            eventListener.onScanComplete(false, errorMessage, ConstantDefs.UNKNOWN_FINGER);
             log.error(ex.getMessage(),ex);
         }
 
@@ -293,7 +293,7 @@ public class FutronicFS64 implements ICallBack {
         } catch (Exception ex) {
             log.error("Error occurred during scan", ex);
             errorMessage = "Error occurred during scan";
-            eventListener.onScanComplete(false, errorMessage, nSequence);
+            eventListener.onScanComplete(false, errorMessage, ConstantDefs.UNKNOWN_FINGER);
             log.error(ex.getMessage(), ex);
         }
 
