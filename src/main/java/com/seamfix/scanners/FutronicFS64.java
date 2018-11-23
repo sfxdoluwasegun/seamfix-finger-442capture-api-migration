@@ -80,15 +80,7 @@ public class FutronicFS64 implements ICallBack {
 
     public boolean initialize() {
         try {
-            if (fpDevice.Open()) {
-                deviceInfo = fpDevice.GetDeviceInfo();
-                String[] split = deviceInfo.split("\n");
-                String[] nameSplit = split[0].split(": ");
-                this.name = "Futronic";
-                this.model = nameSplit[1];
-                if (model.contains("FS64")) {
-                    this.type = ConstantDefs.SCANNER_TYPE;
-                }
+            if (isOpen()) {
                 fpDevice.SetAutoCapture(true);
                 fpDevice.SetSound(true);
                 fpDevice.SetSegmentation(true);
@@ -105,6 +97,26 @@ public class FutronicFS64 implements ICallBack {
         return false;
     }
 
+    public boolean isOpen(){
+        if (fpDevice != null && fpDevice.Open()){
+            deviceInfo = fpDevice.GetDeviceInfo();
+            String[] split = deviceInfo.split("\n");
+            String[] nameSplit = split[0].split(": ");
+            this.name = "Futronic";
+            this.model = nameSplit[1];
+            if (model.contains("FS64")) {
+                this.type = ConstantDefs.SCANNER_TYPE_MULTIPLE;
+            }
+            else {
+                this.type = ConstantDefs.SCANNER_TYPE_SINGLE;
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public void exit() {
         if (fpDevice != null) {
             //end every scan process
@@ -116,7 +128,7 @@ public class FutronicFS64 implements ICallBack {
     }
 
     public void refresh(){
-        fpDevice.Open();
+        //fpDevice.Open();
         fpDevice.SetAutoCapture(true);
         fpDevice.SetSound(true);
         fpDevice.SetSegmentation(true);
