@@ -26,6 +26,7 @@ public class FutronicFS64 implements ICallBack {
     private JLabel showLabel;
     public boolean m_bAskUnavailabilityReason;
     private IScanCompleteEventListener eventListener;
+    private boolean isScanCompleted = false;
 
     private String name;
     private String model;
@@ -143,14 +144,17 @@ public class FutronicFS64 implements ICallBack {
                 diagnosticCode = nCode[0];
                 if (diagnosticCode == 0) {
                     acquisitionSuccess = true;
+                    isScanCompleted = true;
                     eventListener.onScanComplete(acquisitionSuccess, errorMessage, nSequence);
                 } else {
                     acquisitionSuccess = false;
+                    isScanCompleted = true;
                     eventListener.onScanComplete(acquisitionSuccess, errorMessage, nSequence);
                 }
             } else {
                 acquisitionSuccess = false;
                 errorMessage = fpDevice.GetErrorMessage();
+                isScanCompleted = true;
                 eventListener.onScanComplete(acquisitionSuccess, errorMessage, nSequence);
             }
         } else if (nAction == 1) {
@@ -160,6 +164,7 @@ public class FutronicFS64 implements ICallBack {
         } else if (nAction == 4) {
             acquisitionSuccess = false;
             errorMessage = fpDevice.GetErrorMessage();
+            isScanCompleted = true;
             eventListener.onScanComplete(acquisitionSuccess, errorMessage, nSequence);
         }
 
@@ -324,11 +329,26 @@ public class FutronicFS64 implements ICallBack {
         timer.schedule(timerTask, 100);
     }
 
+    private void terminateAfterTimeOut(long delay){
+        Timer mTimer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (!isScanCompleted){
+                    fpDevice.Stop();
+                    eventListener.onScanComplete(false,ConstantDefs.CAPTURE_TIME_ELAPSED, ConstantDefs.UNKNOWN_FINGER);
+                }
+                isScanCompleted = false;
+            }
+        };
+        mTimer.schedule(timerTask, delay);
+    }
+
     public void setnSequence(byte finger) {
         nSequence = finger;
     }
 
-    public void runCapture(final byte finger) {
+    public void runCapture(final byte finger, long timeOut) {
 
         nSequence = finger;
         if (nSequence == ConstantDefs.FT_2_THUMBS) {
@@ -340,24 +360,29 @@ public class FutronicFS64 implements ICallBack {
         }
 
         StartOperation();
+        terminateAfterTimeOut(timeOut);
     }
 
-    public void runSingleCapture(byte finger) {
+    public void runSingleCapture(byte finger, long timeOut) {
+        capture(finger, timeOut);
+    }
+
+    public void runSingleCapture(long timeOut) {
+        capture(null, timeOut);
+    }
+
+    private void capture(Byte finger, long timeOut){
         refresh();
         nSequence = ConstantDefs.FT_PLAIN_LEFT_THUMB;
         m_nScanType = ConstantDefs.DEVICE_SCAN_TYPE_FLAT_FINGER;
-        fpDevice.setFingerToCapture(finger);
+        if (finger == null){
+            fpDevice.setFingerToCapture(ConstantDefs.FT_PLAIN_FINGER);
+        }else {
+            fpDevice.setFingerToCapture(finger);
+        }
 
         StartOperation();
-    }
-
-    public void runSingleCapture() {
-        refresh();
-        nSequence = ConstantDefs.FT_PLAIN_LEFT_THUMB;
-        m_nScanType = ConstantDefs.DEVICE_SCAN_TYPE_FLAT_FINGER;
-        fpDevice.setFingerToCapture(ConstantDefs.FT_PLAIN_FINGER);
-
-        StartOperation();
+        terminateAfterTimeOut(timeOut);
     }
 
     public void scanCompleteEventHandler(IScanCompleteEventListener eventListener) {

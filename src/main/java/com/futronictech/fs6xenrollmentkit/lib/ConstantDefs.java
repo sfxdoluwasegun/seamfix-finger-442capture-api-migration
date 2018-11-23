@@ -74,6 +74,7 @@ public class ConstantDefs {
     public static final String SCANNER_TYPE_MULTIPLE = "4-4-2";
     public static final String SCANNER_TYPE_SINGLE = "Single";
     public static final byte UNKNOWN_FINGER = -1;
+    public static final String CAPTURE_TIME_ELAPSED = "Capture time elapsed";
     
     public static String GetDeviceName(byte nDeviceCompatibility, short[] nDeviceID)
     {

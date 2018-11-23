@@ -567,7 +567,7 @@ public class FingerPrintScan extends javax.swing.JFrame {
             lblStatus.setText("Place Four Left Fingers");
             //futronicFS64.setnSequence(ConstantDefs.FT_PLAIN_LEFT_THUMB);
             isCaptureRunning = true;
-            futronicFS64.runCapture(ConstantDefs.FT_RIGHT_4_FINGERS);
+            futronicFS64.runCapture(ConstantDefs.FT_RIGHT_4_FINGERS, 10000);
             btnExitDevice.setEnabled(false);
         }
 
