@@ -33,6 +33,7 @@ public class FutronicFS64 implements ICallBack {
     private String serialNumber = "N/A";
     private String type;
     private Date loadDate = new Date();
+    private Timer mTimer;
 
     private ArrayList<BufferedImage> leftHandImages;
     private ArrayList<BufferedImage> rightHandImages;
@@ -136,6 +137,8 @@ public class FutronicFS64 implements ICallBack {
     }
 
     public void OnAction(int nAction) {
+        isScanCompleted = true;
+        mTimer.cancel();
         if (nAction == 0) {
             if (fpDevice.VerifyImage(nSequence)) {
 
@@ -144,27 +147,21 @@ public class FutronicFS64 implements ICallBack {
                 diagnosticCode = nCode[0];
                 if (diagnosticCode == 0) {
                     acquisitionSuccess = true;
-                    isScanCompleted = true;
                     eventListener.onScanComplete(acquisitionSuccess, errorMessage, nSequence);
                 } else {
                     acquisitionSuccess = false;
-                    isScanCompleted = true;
                     eventListener.onScanComplete(acquisitionSuccess, errorMessage, nSequence);
                 }
             } else {
                 acquisitionSuccess = false;
                 errorMessage = fpDevice.GetErrorMessage();
-                isScanCompleted = true;
                 eventListener.onScanComplete(acquisitionSuccess, errorMessage, nSequence);
             }
         } else if (nAction == 1) {
-
         } else if (nAction == 2) {
-            //acquisitionSuccess = false;
         } else if (nAction == 4) {
             acquisitionSuccess = false;
             errorMessage = fpDevice.GetErrorMessage();
-            isScanCompleted = true;
             eventListener.onScanComplete(acquisitionSuccess, errorMessage, nSequence);
         }
 
@@ -330,7 +327,7 @@ public class FutronicFS64 implements ICallBack {
     }
 
     private void terminateAfterTimeOut(long delay){
-        Timer mTimer = new Timer();
+        mTimer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
