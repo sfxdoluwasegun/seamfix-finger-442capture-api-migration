@@ -26,12 +26,14 @@ public class FutronicFS64 implements ICallBack {
     private JLabel showLabel;
     public boolean m_bAskUnavailabilityReason;
     private IScanCompleteEventListener eventListener;
+    private boolean isScanCompleted = false;
 
     private String name;
     private String model;
     private String serialNumber = "N/A";
     private String type;
     private Date loadDate = new Date();
+    private Timer mTimer;
 
     private ArrayList<BufferedImage> leftHandImages;
     private ArrayList<BufferedImage> rightHandImages;
@@ -80,15 +82,7 @@ public class FutronicFS64 implements ICallBack {
 
     public boolean initialize() {
         try {
-            if (fpDevice.Open()) {
-                deviceInfo = fpDevice.GetDeviceInfo();
-                String[] split = deviceInfo.split("\n");
-                String[] nameSplit = split[0].split(": ");
-                this.name = "Futronic";
-                this.model = nameSplit[1];
-                if (model.contains("FS64")) {
-                    this.type = ConstantDefs.SCANNER_TYPE;
-                }
+            if (isOpen()) {
                 fpDevice.SetAutoCapture(true);
                 fpDevice.SetSound(true);
                 fpDevice.SetSegmentation(true);
@@ -105,6 +99,26 @@ public class FutronicFS64 implements ICallBack {
         return false;
     }
 
+    public boolean isOpen(){
+        if (fpDevice != null && fpDevice.Open()){
+            deviceInfo = fpDevice.GetDeviceInfo();
+            String[] split = deviceInfo.split("\n");
+            String[] nameSplit = split[0].split(": ");
+            this.name = "Futronic";
+            this.model = nameSplit[1];
+            if (model.contains("FS64")) {
+                this.type = ConstantDefs.SCANNER_TYPE_MULTIPLE;
+            }
+            else {
+                this.type = ConstantDefs.SCANNER_TYPE_SINGLE;
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public void exit() {
         if (fpDevice != null) {
             //end every scan process
@@ -116,13 +130,15 @@ public class FutronicFS64 implements ICallBack {
     }
 
     public void refresh(){
-        fpDevice.Open();
+        //fpDevice.Open();
         fpDevice.SetAutoCapture(true);
         fpDevice.SetSound(true);
         fpDevice.SetSegmentation(true);
     }
 
     public void OnAction(int nAction) {
+        isScanCompleted = true;
+        mTimer.cancel();
         if (nAction == 0) {
             if (fpDevice.VerifyImage(nSequence)) {
 
@@ -142,9 +158,7 @@ public class FutronicFS64 implements ICallBack {
                 eventListener.onScanComplete(acquisitionSuccess, errorMessage, nSequence);
             }
         } else if (nAction == 1) {
-
         } else if (nAction == 2) {
-            //acquisitionSuccess = false;
         } else if (nAction == 4) {
             acquisitionSuccess = false;
             errorMessage = fpDevice.GetErrorMessage();
@@ -180,7 +194,7 @@ public class FutronicFS64 implements ICallBack {
         } catch (Exception e) {
             log.error("Error while saving fingerprint image to memory", e);
             errorMessage = "Error while saving fingerprint image to memory";
-            eventListener.onScanComplete(false, errorMessage, finger);
+            eventListener.onScanComplete(false, errorMessage, ConstantDefs.UNKNOWN_FINGER);
             log.error(e.getMessage(), e);
         }
 
@@ -229,7 +243,7 @@ public class FutronicFS64 implements ICallBack {
         } catch (Exception ex) {
             log.error("Error getting saved images from memory", ex);
             errorMessage = "Error getting saved images from memory";
-            eventListener.onScanComplete(false, errorMessage, finger);
+            eventListener.onScanComplete(false, errorMessage, ConstantDefs.UNKNOWN_FINGER);
             log.error(ex.getMessage(),ex);
         }
 
@@ -293,7 +307,7 @@ public class FutronicFS64 implements ICallBack {
         } catch (Exception ex) {
             log.error("Error occurred during scan", ex);
             errorMessage = "Error occurred during scan";
-            eventListener.onScanComplete(false, errorMessage, nSequence);
+            eventListener.onScanComplete(false, errorMessage, ConstantDefs.UNKNOWN_FINGER);
             log.error(ex.getMessage(), ex);
         }
 
@@ -312,11 +326,26 @@ public class FutronicFS64 implements ICallBack {
         timer.schedule(timerTask, 100);
     }
 
+    private void terminateAfterTimeOut(long delay){
+        mTimer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (!isScanCompleted){
+                    fpDevice.Stop();
+                    eventListener.onScanComplete(false,ConstantDefs.CAPTURE_TIME_ELAPSED, ConstantDefs.UNKNOWN_FINGER);
+                }
+                isScanCompleted = false;
+            }
+        };
+        mTimer.schedule(timerTask, delay);
+    }
+
     public void setnSequence(byte finger) {
         nSequence = finger;
     }
 
-    public void runCapture(final byte finger) {
+    public void runCapture(final byte finger, long timeOut) {
 
         nSequence = finger;
         if (nSequence == ConstantDefs.FT_2_THUMBS) {
@@ -328,24 +357,29 @@ public class FutronicFS64 implements ICallBack {
         }
 
         StartOperation();
+        terminateAfterTimeOut(timeOut);
     }
 
-    public void runSingleCapture(byte finger) {
+    public void runSingleCapture(byte finger, long timeOut) {
+        capture(finger, timeOut);
+    }
+
+    public void runSingleCapture(long timeOut) {
+        capture(null, timeOut);
+    }
+
+    private void capture(Byte finger, long timeOut){
         refresh();
         nSequence = ConstantDefs.FT_PLAIN_LEFT_THUMB;
         m_nScanType = ConstantDefs.DEVICE_SCAN_TYPE_FLAT_FINGER;
-        fpDevice.setFingerToCapture(finger);
+        if (finger == null){
+            fpDevice.setFingerToCapture(ConstantDefs.FT_PLAIN_FINGER);
+        }else {
+            fpDevice.setFingerToCapture(finger);
+        }
 
         StartOperation();
-    }
-
-    public void runSingleCapture() {
-        refresh();
-        nSequence = ConstantDefs.FT_PLAIN_LEFT_THUMB;
-        m_nScanType = ConstantDefs.DEVICE_SCAN_TYPE_FLAT_FINGER;
-        fpDevice.setFingerToCapture(ConstantDefs.FT_PLAIN_FINGER);
-
-        StartOperation();
+        terminateAfterTimeOut(timeOut);
     }
 
     public void scanCompleteEventHandler(IScanCompleteEventListener eventListener) {
