@@ -3,11 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.seamfix.scanners.test;
 
 import com.futronictech.fs6xenrollmentkit.interfaces.IScanCompleteEventListener;
 import com.futronictech.fs6xenrollmentkit.lib.ConstantDefs;
-import com.futronictech.fs6xenrollmentkit.lib.FPDevice;
 import com.seamfix.scanners.FutronicFS64;
 
 import javax.imageio.ImageIO;
@@ -39,7 +37,7 @@ public class FingerPrintScan extends javax.swing.JFrame {
         lblDeviceInfo.setEnabled(false);
         btnStartCapture.setEnabled(false);
         btnExitDevice.setEnabled(false);
-        futronicFS64 = FutronicFS64.getInstance();
+        futronicFS64 = new FutronicFS64();
         futronicFS64.SetShowImageHandler(lblPreview);
         isCaptureRunning = false;
         scanCompleted = false;
@@ -48,7 +46,7 @@ public class FingerPrintScan extends javax.swing.JFrame {
         futronicFS64.scanCompleteEventHandler(new IScanCompleteEventListener() {
             public void onScanComplete(boolean isValid, String message, final byte finger) {
                 lblStatus.setText(message);
-                if (isValid) {
+                if (isValid && finger != -1) {
                     if (!scanCompleted) {
                         switch (finger) {
                             case ConstantDefs.FT_LEFT_4_FINGERS:
@@ -77,12 +75,12 @@ public class FingerPrintScan extends javax.swing.JFrame {
                             @Override
                             public void run() {
                                 futronicFS64.AcceptImage(finger);
-                                futronicFS64.getLeftHandImages();
-                                if (finger != ConstantDefs.FT_2_THUMBS && finger < ConstantDefs.FT_LEFT_LITTLE) {
-                                    futronicFS64.StartScanning();
-                                }
+                                //futronicFS64.getLeftHandImages();
+//                                if (finger != ConstantDefs.FT_2_THUMBS && finger < ConstantDefs.FT_LEFT_LITTLE) {
+//                                    futronicFS64.StartScanning();
+//                                }
 
-                                if (finger > ConstantDefs.FT_RIGHT_4_FINGERS) {
+                                if (finger == ConstantDefs.FT_RIGHT_4_FINGERS) {
                                     scanCompleted = true;
                                     futronicFS64.TurnOffLed();
                                     lblStatus.setText("Scan Complete");
@@ -91,9 +89,13 @@ public class FingerPrintScan extends javax.swing.JFrame {
                                     btnStartCapture.setEnabled(false);
                                     btnExitDevice.setEnabled(true);
                                     try {
-                                        BufferedImage bImage = futronicFS64.getFingerImage();
+
+
+                                        for (int i = 0; i<futronicFS64.getRightHandImages().size(); i++){
+                                            BufferedImage bImage = futronicFS64.getRightHandImages().get(i);
+                                            ImageIO.write(bImage, "bmp", new File("C:\\Users\\SEAMFIX\\Desktop\\fingerprints\\finger_" + i +".bmp"));
+                                        }
 //
-                                        ImageIO.write(bImage, "bmp", new File("C:\\Users\\SEAMFIX\\Desktop\\fingerprints\\fingerCrop.bmp"));
 
                                     } catch (IOException e) {
                                         System.out.println("Exception occured :" + e.getMessage());
@@ -107,7 +109,7 @@ public class FingerPrintScan extends javax.swing.JFrame {
 
                     }
                 } else {
-                    futronicFS64.setM_nSequence(ConstantDefs.FT_LEFT_4_FINGERS);
+                    futronicFS64.setnSequence(ConstantDefs.FT_LEFT_4_FINGERS);
                     btnExitDevice.setEnabled(true);
                     btnStartCapture.setLabel("Start Capture");
                     isCaptureRunning = false;
@@ -135,7 +137,7 @@ public class FingerPrintScan extends javax.swing.JFrame {
                 nScanType |= ConstantDefs.DEVICE_SCAN_TYPE_2THUMBS;    //FS50
             }
             futronicFS64.setM_nScanType(nScanType);
-            futronicFS64.setM_nSequence(ConstantDefs.FT_LEFT_4_FINGERS);
+            futronicFS64.setnSequence(ConstantDefs.FT_LEFT_4_FINGERS);
         }
     }
 
@@ -563,9 +565,9 @@ public class FingerPrintScan extends javax.swing.JFrame {
             scanCompleted = false;
             btnStartCapture.setLabel("Stop Capture");
             lblStatus.setText("Place Four Left Fingers");
-            //futronicFS64.setM_nSequence(ConstantDefs.FT_PLAIN_LEFT_THUMB);
+            //futronicFS64.setnSequence(ConstantDefs.FT_PLAIN_LEFT_THUMB);
             isCaptureRunning = true;
-            futronicFS64.runCapture(ConstantDefs.FT_2_THUMBS);
+            futronicFS64.runCapture(ConstantDefs.FT_RIGHT_4_FINGERS, 10000);
             btnExitDevice.setEnabled(false);
         }
 

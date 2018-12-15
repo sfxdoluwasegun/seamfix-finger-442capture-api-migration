@@ -39,7 +39,7 @@ public class ConstantDefs {
     public static final byte FT_ROLLED_RIGHT_LITTLE = 22;
     public static final byte FT_PLAIN_LEFT_THUMB = 23;			// for Type4 record, 500*600 image
     public static final byte FT_PLAIN_RIGHT_THUMB = 24;
-    public static final byte FT_PLAIN_FINGER = 23;
+    public static final byte FT_PLAIN_FINGER = 25;
     
     public static final byte DEVICE_SCAN_TYPE_SLAPS = 0x01;
     public static final byte DEVICE_SCAN_TYPE_2THUMBS = 0x02;	//for FS50 
@@ -70,7 +70,11 @@ public class ConstantDefs {
     public static final int FTR_DEVICE_USB_2_0_TYPE_80W = 11;
     public static final int FTR_DEVICE_USB_2_0_TYPE_80H = 13;
     public static final int FTR_DEVICE_USB_2_0_TYPE_88H = 14;
-    public static final int FTR_DEVICE_USB_2_0_TYPE_64 = 15;    
+    public static final int FTR_DEVICE_USB_2_0_TYPE_64 = 15;
+    public static final String SCANNER_TYPE_MULTIPLE = "4-4-2";
+    public static final String SCANNER_TYPE_SINGLE = "Single";
+    public static final byte UNKNOWN_FINGER = -1;
+    public static final String CAPTURE_TIME_ELAPSED = "Capture time elapsed";
     
     public static String GetDeviceName(byte nDeviceCompatibility, short[] nDeviceID)
     {

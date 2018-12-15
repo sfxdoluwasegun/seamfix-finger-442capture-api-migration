@@ -495,8 +495,51 @@ public class FPDevice {
         // start thread
         m_WorkerThread = new WorkerThread();
         m_WorkerThread.start();
-        if (fingerToCapture == ConstantDefs.FT_PLAIN_LEFT_THUMB){
-            TurnOffLed();
+
+        switch (fingerToCapture){
+            case ConstantDefs.FT_LEFT_LITTLE:
+                TurnOffLed();
+                LedControl.SetSingleLed(m_libNative, true, true, (byte) 0, (byte) 2, false);
+                break;
+            case ConstantDefs.FT_LEFT_RING:
+                TurnOffLed();
+                LedControl.SetSingleLed(m_libNative, true, true, (byte) 1, (byte) 2, false);
+                break;
+            case ConstantDefs.FT_LEFT_MIDDLE:
+                TurnOffLed();
+                LedControl.SetSingleLed(m_libNative, true, true, (byte) 2, (byte) 2, false);
+                break;
+            case ConstantDefs.FT_LEFT_INDEX:
+                TurnOffLed();
+                LedControl.SetSingleLed(m_libNative, true, true, (byte) 3, (byte) 2, false);
+                break;
+            case ConstantDefs.FT_LEFT_THUMB:
+                TurnOffLed();
+                LedControl.SetSingleLed(m_libNative, true, true, (byte) 4, (byte) 2, false);
+                break;
+            case ConstantDefs.FT_RIGHT_THUMB:
+                TurnOffLed();
+                LedControl.SetSingleLed(m_libNative, true, true, (byte) 5, (byte) 2, false);
+                break;
+            case ConstantDefs.FT_RIGHT_INDEX:
+                TurnOffLed();
+                LedControl.SetSingleLed(m_libNative, true, true, (byte) 6, (byte) 2, false);
+                break;
+            case ConstantDefs.FT_RIGHT_MIDDLE:
+                TurnOffLed();
+                LedControl.SetSingleLed(m_libNative, true, true, (byte) 7, (byte) 2, false);
+                break;
+            case ConstantDefs.FT_RIGHT_RING:
+                TurnOffLed();
+                LedControl.SetSingleLed(m_libNative, true, true, (byte) 8, (byte) 2, false);
+                break;
+            case ConstantDefs.FT_RIGHT_LITTLE:
+                TurnOffLed();
+                LedControl.SetSingleLed(m_libNative, true, true, (byte) 9, (byte) 2, false);
+                break;
+            case ConstantDefs.FT_PLAIN_FINGER:
+                TurnOffLed();
+                break;
         }
         return true;
     }
@@ -1638,10 +1681,11 @@ public class FPDevice {
         public void run() {
             m_bRun = true;
             m_bIsScanning = true;
-            if (m_bIsRoll)
+            if (m_bIsRoll){
                 DoRoll();
-            else
+            } else {
                 DoScan();
+            }
             m_bIsScanning = false;
         }
 
