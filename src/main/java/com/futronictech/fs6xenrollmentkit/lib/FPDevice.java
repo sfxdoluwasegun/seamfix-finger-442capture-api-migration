@@ -8,13 +8,11 @@ package com.futronictech.fs6xenrollmentkit.lib;
 
 import com.futronictech.fs6xenrollmentkit.interfaces.ICallBack;
 import com.futronictech.fs6xenrollmentkit.ui.MyIcon;
-
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
@@ -947,12 +945,12 @@ public class FPDevice {
                 if (m_aiImage[nIndex - 16].pAcceptedImage != null || m_aiImage[nIndex - 6].pAcceptedImage != null) {
                     strMsg = String.format("Failed to check the finger sequence!\tMatch score is %d.", nScore[0]);
                     SetErrorMessage(strMsg);
-                    strMsg += "\r\n\r\nDo you want to continue to accept the image?\r\n\r\n";
+                   /* strMsg += "\r\n\r\nDo you want to continue to accept the image?\r\n\r\n";
                     int nResponse = JOptionPane.showConfirmDialog(null,
                             strMsg,
                             "Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (nResponse == JOptionPane.NO_OPTION)
-                        return false;
+                        return false;*/
                 }
             }
         } else if (nIndex >= ConstantDefs.FT_ROLLED_LEFT_LITTLE) {
@@ -968,12 +966,12 @@ public class FPDevice {
                 if (m_aiImage[nIndex - 10].pAcceptedImage != null) {
                     strMsg = String.format("Failed to check the finger sequence!\tMatch score is %d.", nScore[0]);
                     SetErrorMessage(strMsg);
-                    strMsg += "\r\n\r\nDo you want to continue to accept the image?\r\n\r\n";
+                    /*strMsg += "\r\n\r\nDo you want to continue to accept the image?\r\n\r\n";
                     int nResponse = JOptionPane.showConfirmDialog(null,
                             strMsg,
                             "Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (nResponse == JOptionPane.NO_OPTION)
-                        return false;
+                        return false;*/
                 }
             }
         } else if (nIndex >= ConstantDefs.FT_LEFT_LITTLE)    //for flat finger
