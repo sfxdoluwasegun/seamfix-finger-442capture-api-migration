@@ -1,18 +1,18 @@
 package com.seamfix.scanners;
 
+import com.futronictech.fs6xenrollmentkit.interfaces.ICallBack;
 import com.futronictech.fs6xenrollmentkit.interfaces.IScanCompleteEventListener;
 import com.futronictech.fs6xenrollmentkit.lib.ConstantDefs;
 import com.futronictech.fs6xenrollmentkit.lib.FPDevice;
-import com.futronictech.fs6xenrollmentkit.interfaces.ICallBack;
-import lombok.extern.log4j.Log4j;
-
-import javax.swing.JLabel;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.swing.JLabel;
+import lombok.extern.log4j.Log4j;
 
 @Log4j
 public class FutronicFS64 implements ICallBack {
@@ -425,6 +425,13 @@ public class FutronicFS64 implements ICallBack {
 
     public String getType() {
         return type;
+    }
+
+    public void showImageText(Color colorText, String message) {
+        if(fpDevice != null){
+            fpDevice.ShowImage(0,0,null);
+            fpDevice.ShowImageText(colorText,message);
+        }
     }
 
     public String toString() {
