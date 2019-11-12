@@ -20,7 +20,7 @@ public class FutronicFS64 implements ICallBack {
     public byte m_nScanType = ConstantDefs.DEVICE_SCAN_TYPE_SLAPS;    //bit0. Slaps 1.Single 2.Rolled
     private int diagnosticCode = 0;
     public byte nSequence = 0;
-    private static FPDevice fpDevice = null;
+    private FPDevice fpDevice = null;
     private String deviceInfo = "";
     private Timer timer = null;
     private JLabel showLabel;
@@ -66,7 +66,7 @@ public class FutronicFS64 implements ICallBack {
     }
 
     public FutronicFS64(FPDevice device) {
-        fpDevice = device;
+        this.fpDevice = device;
         leftHandImages = new ArrayList<BufferedImage>();
         rightHandImages = new ArrayList<BufferedImage>();
         twoThumbsImages = new ArrayList<BufferedImage>();
@@ -122,10 +122,11 @@ public class FutronicFS64 implements ICallBack {
     public void exit() {
         if (fpDevice != null) {
             //end every scan process
-            eventListener.onScanComplete(false, "exiting", (byte) -1);
+            //eventListener.onScanComplete(false, "exiting", (byte) -1);
             fpDevice.Stop();
             fpDevice.TurnOffLed();
             fpDevice.Close();
+            fpDevice.FreeBuffer();
         }
     }
 
@@ -184,7 +185,7 @@ public class FutronicFS64 implements ICallBack {
         if (m_bAskUnavailabilityReason) {
             int[] nUnavailableFingers = new int[1];
             nUnavailableFingers[0] = 0;
-            boolean bUnavailable = fpDevice.IsUnavailable(nUnavailableFingers);
+            //boolean bUnavailable = fpDevice.IsUnavailable(nUnavailableFingers);
             fpDevice.ResetAmpNumber(nSequence);
         }
         try {
@@ -396,6 +397,7 @@ public class FutronicFS64 implements ICallBack {
 
     public void Stop() {
         fpDevice.Stop();
+        fpDevice.FreeBuffer();
     }
 
     public void ShowAcceptedImage(byte finger, JLabel label) {
