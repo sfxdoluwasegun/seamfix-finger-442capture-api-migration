@@ -6,7 +6,7 @@
 
     <groupId>com.seamfix</groupId>
     <artifactId>finger-442capture-api</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>log4j</groupId>
@@ -29,19 +29,19 @@
             <releases>
                 <enabled>true</enabled>
             </releases>
-            <url>http://singlewindow.seamfix.com:7997/nexus/content/groups/public</url>
+            <url>https://nexus.seamfix.com/nexus/content/groups/public</url>
         </repository>
     </repositories>
     <distributionManagement>
         <repository>
             <id>deployment</id>
             <name>Internal Releases</name>
-            <url>http://singlewindow.seamfix.com:7997/nexus/content/repositories/releases</url>
+            <url>https://nexus.seamfix.com/nexus/content/repositories/releases</url>
         </repository>
         <snapshotRepository>
             <id>deployment</id>
             <name>Internal Releases</name>
-            <url>http://singlewindow.seamfix.com:7997/nexus/content/repositories/snapshots</url>
+            <url>https://nexus.seamfix.com/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
